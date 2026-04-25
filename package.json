@@ -1,0 +1,20 @@
+{
+  "name": "restorans-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "server": "nodemon server.js",
+    "watch": "browser-sync start --proxy \"localhost:3000\" --files \"main/*.*\"",
+    "start": "concurrently \"npm run server\" \"npm run watch\""
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.9.0",
+    "express": "^5.2.1",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.4",
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.0"
+  }
+}
