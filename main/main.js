@@ -1,4 +1,8 @@
-// Show jobs from API
+
+window.addEventListener('DOMContentLoaded', function() {
+    showJobs();
+});
+
 async function showJobs() {
     const container = document.querySelector(".jobs-grid");
     try {
@@ -68,11 +72,9 @@ async function showJobs() {
     }
 }
 
-// Open modal
 function openAddForm() {
     const modal = document.getElementById("add-modal");
     if (modal) {
-        // Iestatām datuma limitus pirms atvēršanas
         const dateFrom = document.getElementById('date-from');
         const dateTo = document.getElementById('date-to');
         
@@ -83,7 +85,6 @@ function openAddForm() {
     }
 }
 
-// Close modal
 function closeAddForm() {
     const modal = document.getElementById("add-modal");
     if (modal) {
@@ -91,7 +92,6 @@ function closeAddForm() {
     }
 }
 
-// Close modal when clicking outside of it
 window.addEventListener('click', function(event) {
     const modal = document.getElementById('add-modal');
     if (event.target === modal) {
@@ -99,9 +99,6 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// --- Form Input Handlers ---
-
-// Time input formatting (2 digits)
 const timeInputs = document.querySelectorAll('.time-input');
 timeInputs.forEach(input => {
     input.addEventListener('focus', function() {
@@ -134,7 +131,6 @@ timeInputs.forEach(input => {
     });
 });
 
-// Character limit for company name
 const companyName = document.getElementById('company-name');
 if (companyName) {
     companyName.setAttribute('maxlength', '100');
@@ -143,7 +139,6 @@ if (companyName) {
     });
 }
 
-// Character limit for job title
 const jobTitle = document.getElementById('job-title');
 if (jobTitle) {
     jobTitle.setAttribute('maxlength', '60');
@@ -152,7 +147,6 @@ if (jobTitle) {
     });
 }
 
-// Character limit for responsibilities
 const responsibilities = document.getElementById('job-responsibilities');
 if (responsibilities) {
     responsibilities.setAttribute('maxlength', '300');
@@ -161,7 +155,6 @@ if (responsibilities) {
     });
 }
 
-// Character limit for requirements
 const requirements = document.getElementById('job-requirements');
 if (requirements) {
     requirements.setAttribute('maxlength', '300');
@@ -170,7 +163,6 @@ if (requirements) {
     });
 }
 
-// Update character counter display
 function updateCharCount(elementId, maxChars) {
     const element = document.getElementById(elementId);
     if (element) {
@@ -182,7 +174,6 @@ function updateCharCount(elementId, maxChars) {
     }
 }
 
-// Salary validation
 const salaryMin = document.getElementById('salary-min');
 if (salaryMin) {
     salaryMin.addEventListener('input', function() {
@@ -194,5 +185,38 @@ if (salaryMin) {
     });
 }
 
-// Load jobs on page load
-showJobs();
+document.getElementById("add-modal").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const data = {
+    company_title:  document.getElementById("company-name").value,
+    job_title:  document.getElementById("job-title").value,
+    city:   document.getElementById("job-city").value,
+    category:   document.getElementById("job-category").value,
+    start_work: document.getElementById("start-hour").value +":"+ document.getElementById("start-min").value,
+    end_work:   document.getElementById("end-hour").value +":"+ document.getElementById("end-min").value,
+    work_from:  document.getElementById("date-from").value,
+    work_till:  document.getElementById("date-to").value,
+    min_salary: Number(document.getElementById("salary-min").value),
+    max_salary: Number(document.getElementById("salary-max").value),
+    open_slots: Number(document.getElementById("open-slots").value),
+    job_responsibilities:   document.getElementById("job-responsibilities").value,
+    job_requirements:   document.getElementById("job-requirements").value,
+  };
+
+  try {
+    const response = await fetch("/api/advertisement", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    console.log(result);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+});
+
