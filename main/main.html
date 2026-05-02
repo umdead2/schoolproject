@@ -43,16 +43,24 @@
  
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Pilsēta</label>
-                        <input type="text" id="job-city" placeholder="Piemēram: Rīga" required>
+                        <label for="job-city">Pilsēta</label>
+                        <input type="text" id="job-city" list="city-list" placeholder="Sāciet rakstīt (piem. Rīga...)" required>
+                        <datalist id="city-list">
+                           
+                        </datalist>
                     </div>
                     <div class="form-group">
                         <label>Kategorija</label>
                         <select id="job-category" required>
                             <option value="">Izvēlieties</option>
-                            <option value="Apkalpošana">Apkalpošana</option>
-                            <option value="Tirdzniecība">Tirdzniecība</option>
-                            <option value="Loģistika">Loģistika</option>
+                            <option value="Apkalpošana">Apkalpošana (Viesmīļi, bārmeņi)</option>
+                            <option value="Tirdzniecība">Tirdzniecība (Pārdevēji, kases)</option>
+                            <option value="Loģistika">Loģistika & Noliktava</option>
+                            <option value="Ražošana">Ražošana & Pakošana</option>
+                            <option value="Lauksaimniecība">Lauksaimniecība (Ogas, dārzi)</option>
+                            <option value="Pasākumi">Pasākumi & Festivāli</option>
+                            <option value="Administrācija">Administrācija & Birojs</option>
+                            <option value="Kurjeri">Kurjeri & Piegāde</option>
                             <option value="Cits">Cits</option>
                         </select>
                     </div>
@@ -122,10 +130,53 @@
             </form>
         </div>
     </div>
+<div id="add-filter" class="filters-container">
+    <div class="filters-content">
+        <!-- Search by Keyword -->
+        <div class="filter-group">
+            <label>Kompānija</label>
+            <input type="text" id="filter-company" placeholder="Kompānija">
+        </div>
+
+        <!-- Filter by City -->
+        <div class="filter-group">
+            <label>Pilsēta</label>
+            <input type="text" id="filter-city" list="city-list" placeholder="Visas pilsētas">
+        </div>
+
+        <!-- Filter by Category -->
+        <div class="filter-group">
+            <label>Kategorija</label>
+            <select id="filter-category">
+                <option value="all">Visas kategorijas</option>
+                <option value="Apkalpošana">Apkalpošana (Viesmīļi, bārmeņi)</option>
+                <option value="Tirdzniecība">Tirdzniecība (Pārdevēji, kases)</option>
+                <option value="Loģistika">Loģistika & Noliktava</option>
+                <option value="Ražošana">Ražošana & Pakošana</option>
+                <option value="Lauksaimniecība">Lauksaimniecība (Ogas, dārzi)</option>
+                <option value="Pasākumi">Pasākumi & Festivāli</option>
+                <option value="Administrācija">Administrācija & Birojs</option>
+                <option value="Kurjeri">Kurjeri & Piegāde</option>
+                <option value="Cits">Cits</option>
+            </select>
+        </div>
+
+        <!-- Filter by Salary -->
+        <div class="filter-group">
+                <label>Min. alga (€)</label>
+                <input type="number" id="filter-salary" placeholder="Piem. 800">
+            </div>
+
+            <!-- Filter Button -->
+            <div class="filter-actions">
+                <button id="btn-filter" type="submit" class="filter-submit-btn">Meklēt</button>
+            </div>
+        </div>
+</div>
     <main class="container">
         <div class="jobs-grid"></div>
     </main>
 
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
 </html>

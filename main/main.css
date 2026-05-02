@@ -537,6 +537,106 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+#job-city {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0aec0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 30px; /* Make space for the arrow */
+}
+
+/* Optional: Hides the default browser arrow if you prefer the custom SVG one above */
+#job-city::-webkit-calendar-picker-indicator {
+    opacity: 0;
+}
+.filters-container {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.filters-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1fr auto;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-group input, 
+.filter-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 13px;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.filter-group input:focus, 
+.filter-group select:focus {
+    border-color: #2563eb;
+    background-color: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.filter-submit-btn {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 11px 25px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filter-submit-btn:hover {
+    background-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Responsive Filters */
+@media (max-width: 992px) {
+    .filters-content {
+        grid-template-columns: 1fr 1fr;
+    }
+    .filter-actions {
+        grid-column: span 2;
+    }
+    .filter-submit-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .filters-content {
+        grid-template-columns: 1fr;
+    }
+    .filter-actions {
+        grid-column: span 1;
+    }
+}
 
 /* Responsive */
 @media (max-width: 600px) {
