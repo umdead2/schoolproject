@@ -9,16 +9,160 @@
 <body> 
     <header>
         <div class="header-content">
-            <h1 id="page-title">Vasaras darbi</h1>
+            <h1 id="page-title">☀️ Vasaras Darbi</h1>
+            
             <div class="header-actions">
-                <a href="javascript:void(0)" id="add_ad" class="btn-primary" onclick="openAddForm()">
-                    <span>+</span> Pievienot sludinājumu
+                <a href="javascript:void(0)" id="add_ad" class="btn-primary" onclick="openAddForm()" style="display: none;">
+                    <span>+</span> Pievienot vakanci
                 </a>
+
+                <div id="auth-menu" class="auth-buttons">
+                    <a href="javascript:void(0)" id="btn-login-trigger" class="btn-login" onclick="openLoginModal()">Ienākt</a>
+                    <a href="javascript:void(0)" id="btn-register-trigger" class="btn-register" onclick="openRegisterModal()">Reģistrēties</a>
+                </div>
+
+                <div id="user-menu" class="user-menu" style="display: none;">
+                    <div class="user-info">
+                        <div class="user-avatar" id="user-avatar">J</div>
+                        <div class="user-details">
+                            <span id="user-greeting" class="user-name"></span>
+                            <span id="user-type" class="user-role"></span>
+                        </div>
+                    </div>
+                    <button id="btn-logout" class="btn-logout" onclick="handleLogout()">Iziet</button>
+                </div>
             </div>
         </div>
     </header>
 
+    <div id="add-filter" class="filters-container">
+        <form id="filter-form" class="filters-content">
+            <div class="filter-group">
+                <label>Kompānija</label>
+                <input type="text" id="filter-company" placeholder="Meklēt kompāniju...">
+            </div>
+
+            <div class="filter-group">
+                <label>Pilsēta</label>
+                <input type="text" id="filter-city" list="city-list" placeholder="Izvēlieties pilsētu">
+            </div>
+
+            <div class="filter-group">
+                <label>Kategorija</label>
+                <select id="filter-category">
+                    <option value="all">Visas kategorijas</option>
+                    <option value="Apkalpošana">Apkalpošana (Viesmīļi, bārmeņi)</option>
+                    <option value="Tirdzniecība">Tirdzniecība (Pārdevēji, kases)</option>
+                    <option value="Loģistika">Loģistika & Noliktava</option>
+                    <option value="Ražošana">Ražošana & Pakošana</option>
+                    <option value="Lauksaimniecība">Lauksaimniecība (Ogas, dārzi)</option>
+                    <option value="Pasākumi">Pasākumi & Festivāli</option>
+                    <option value="Administrācija">Administrācija & Birojs</option>
+                    <option value="Kurjeri">Kurjeri & Piegāde</option>
+                    <option value="Cits">Cits</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Min. alga (€)</label>
+                <input type="number" id="filter-salary" placeholder="Piem. 800">
+            </div>
+
+            <div class="filter-actions">
+                <button id="btn-filter" type="submit" class="filter-submit-btn">🔍 Meklēt</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="login-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content auth-modal">
+            <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+            
+            <div class="auth-header">
+                <h2>Ienākt kontā</h2>
+                <p>Piesakieties, lai sāktu strādāt</p>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">E-pasts</label>
+                    <input type="email" id="login-email" placeholder="vards@pasts.lv" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Parole</label>
+                    <input type="password" id="login-password" placeholder="Jūsu parole" required>
+                </div>
+
+                <button type="submit" class="save-btn btn-full">Pieslēgties</button>
+
+                <div class="auth-footer">
+                    <p>Nav konta? <a href="javascript:void(0)" onclick="switchToRegister()">Reģistrējieties</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div id="register-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content auth-modal">
+            <button class="close-btn" onclick="closeRegisterModal()">&times;</button>
+            
+            <div class="auth-header">
+                <h2>Izveidot kontu</h2>
+                <p>Pievienojieties mūsu platformai</p>
+            </div>
+
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-username">Lietotājvārds</label>
+                    <input type="text" id="reg-username" placeholder="Jūsu lietotājvārds vai kompānijas nosaukums" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-email">E-pasts</label>
+                    <input type="email" id="reg-email" placeholder="vards@pasts.lv" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-phone">Telefona numurs</label>
+                    <input type="text" id="reg-phone" placeholder="+371 25123456">
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-password">Parole</label>
+                    <input type="password" id="reg-password" placeholder="Min. 6 rakstzīmes" required>
+                </div>
+
+                <div class="form-group account-type">
+                    <label>Konta tips</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="reg-iscompany" value="0" checked>
+                            <span class="radio-text">👤 Students (Meklēju darbu)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="reg-iscompany" value="1">
+                            <span class="radio-text">🏢 Uzņēmums (Publikuju vakances)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn btn-full">Izveidot kontu</button>
+
+                <div class="auth-footer">
+                    <p>Jau ir konts? <a href="javascript:void(0)" onclick="switchToLogin()">Piesakieties</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD JOB MODAL -->
     <div id="add-modal" class="modal">
+        <div class="modal-overlay"></div>
         <div class="modal-content">
             <div class="modal-header">
                 <div>
@@ -27,45 +171,37 @@
                 </div>
                 <button class="close-btn" onclick="closeAddForm()">&times;</button>
             </div>
- 
+
             <form id="add-job-form">
                 <div class="form-group">
-                    <label>Uzņēmuma nosaukums</label>
-                    <input type="text" id="company-name" placeholder="Piemēram: ABC Solutions" maxlength="100" required>
+                    <label>Vakances nosaukums</label>
+                    <input type="text" id="job-title" placeholder="Piemēram: Pārdevēja palīgs" required>
                     <span class="char-count">0/100</span>
                 </div>
- 
-                <div class="form-group">
-                    <label>Vakances nosaukums</label>
-                    <input type="text" id="job-title" placeholder="Piemēram: Pārdevēja palīgs" maxlength="60" required>
-                    <span class="char-count">0/60</span>
-                </div>
- 
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="job-city">Pilsēta</label>
-                        <input type="text" id="job-city" list="city-list" placeholder="Sāciet rakstīt (piem. Rīga...)" required>
-                        <datalist id="city-list">
-                           
-                        </datalist>
+                        <input type="text" id="job-city" list="city-list" placeholder="Rīga..." required>
+                        <datalist id="city-list"></datalist>
                     </div>
                     <div class="form-group">
                         <label>Kategorija</label>
                         <select id="job-category" required>
                             <option value="">Izvēlieties</option>
-                            <option value="Apkalpošana">Apkalpošana (Viesmīļi, bārmeņi)</option>
-                            <option value="Tirdzniecība">Tirdzniecība (Pārdevēji, kases)</option>
-                            <option value="Loģistika">Loģistika & Noliktava</option>
-                            <option value="Ražošana">Ražošana & Pakošana</option>
-                            <option value="Lauksaimniecība">Lauksaimniecība (Ogas, dārzi)</option>
-                            <option value="Pasākumi">Pasākumi & Festivāli</option>
-                            <option value="Administrācija">Administrācija & Birojs</option>
-                            <option value="Kurjeri">Kurjeri & Piegāde</option>
+                            <option value="Apkalpošana">Apkalpošana</option>
+                            <option value="Tirdzniecība">Tirdzniecība</option>
+                            <option value="Loģistika">Loģistika</option>
+                            <option value="Ražošana">Ražošana</option>
+                            <option value="Lauksaimniecība">Lauksaimniecība</option>
+                            <option value="Pasākumi">Pasākumi</option>
+                            <option value="Administrācija">Administrācija</option>
+                            <option value="Kurjeri">Kurjeri</option>
                             <option value="Cits">Cits</option>
                         </select>
                     </div>
                 </div>
- 
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Sāk darbu</label>
@@ -84,7 +220,7 @@
                         </div>
                     </div>
                 </div>
- 
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Strādās no</label>
@@ -95,14 +231,14 @@
                         <input type="date" id="date-to" required>
                     </div>
                 </div>
- 
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Mēneša alga (€)</label>
                         <div class="salary-container">
-                            <input type="number" id="salary-min" class="salary-input" placeholder="900" min="0" required>
+                            <input type="number" id="salary-min" class="salary-input" placeholder="900" required>
                             <span class="salary-dash">—</span>
-                            <input type="number" id="salary-max" class="salary-input" placeholder="1200" min="0" required>
+                            <input type="number" id="salary-max" class="salary-input" placeholder="1200" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -110,19 +246,13 @@
                         <input type="number" id="open-slots" placeholder="1" min="1" value="1" required>
                     </div>
                 </div>
- 
+
                 <div class="form-group">
                     <label>Galvenie pienākumi</label>
-                    <textarea id="job-responsibilities" placeholder="Aprakstiet darbus..." maxlength="300" required></textarea>
+                    <textarea id="job-responsibilities" placeholder="Aprakstiet darbus..." required></textarea>
                     <span class="char-count">0/300</span>
                 </div>
- 
-                <div class="form-group">
-                    <label>Prasības</label>
-                    <textarea id="job-requirements" placeholder="Ko sagaidāt no darbinieka?" maxlength="300"></textarea>
-                    <span class="char-count">0/300</span>
-                </div>
- 
+
                 <div class="form-actions">
                     <button type="button" class="cancel-btn" onclick="closeAddForm()">Atcelt</button>
                     <button type="submit" class="save-btn">Publicēt</button>
@@ -130,53 +260,11 @@
             </form>
         </div>
     </div>
-<div id="add-filter" class="filters-container">
-    <div class="filters-content">
-        <!-- Search by Keyword -->
-        <div class="filter-group">
-            <label>Kompānija</label>
-            <input type="text" id="filter-company" placeholder="Kompānija">
-        </div>
 
-        <!-- Filter by City -->
-        <div class="filter-group">
-            <label>Pilsēta</label>
-            <input type="text" id="filter-city" list="city-list" placeholder="Visas pilsētas">
-        </div>
-
-        <!-- Filter by Category -->
-        <div class="filter-group">
-            <label>Kategorija</label>
-            <select id="filter-category">
-                <option value="all">Visas kategorijas</option>
-                <option value="Apkalpošana">Apkalpošana (Viesmīļi, bārmeņi)</option>
-                <option value="Tirdzniecība">Tirdzniecība (Pārdevēji, kases)</option>
-                <option value="Loģistika">Loģistika & Noliktava</option>
-                <option value="Ražošana">Ražošana & Pakošana</option>
-                <option value="Lauksaimniecība">Lauksaimniecība (Ogas, dārzi)</option>
-                <option value="Pasākumi">Pasākumi & Festivāli</option>
-                <option value="Administrācija">Administrācija & Birojs</option>
-                <option value="Kurjeri">Kurjeri & Piegāde</option>
-                <option value="Cits">Cits</option>
-            </select>
-        </div>
-
-        <!-- Filter by Salary -->
-        <div class="filter-group">
-                <label>Min. alga (€)</label>
-                <input type="number" id="filter-salary" placeholder="Piem. 800">
-            </div>
-
-            <!-- Filter Button -->
-            <div class="filter-actions">
-                <button id="btn-filter" type="submit" class="filter-submit-btn">Meklēt</button>
-            </div>
-        </div>
-</div>
     <main class="container">
         <div class="jobs-grid"></div>
     </main>
 
-    <script type="module" src="main.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

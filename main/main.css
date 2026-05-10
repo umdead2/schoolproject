@@ -6,14 +6,15 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f3f4f6;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #333;
+    min-height: 100vh;
 }
 
 /* --- Header / Navigācija --- */
 header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     padding: 15px 0;
     position: sticky;
     top: 0;
@@ -31,26 +32,142 @@ header {
 }
 
 #page-title {
-    font-size: 24px;
-    color: #1e40af;
+    font-size: 28px;
+    color: #ffffff;
     margin: 0;
     font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
-#add_ad {
-    background-color: #2563eb;
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-primary {
+    background-color: #10b981;
     color: white;
     text-decoration: none;
     padding: 10px 20px;
     border-radius: 8px;
     font-weight: 600;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
     cursor: pointer;
     border: none;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
-#add_ad:hover {
-    background-color: #1d4ed8;
+.btn-primary:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Auth Menu Buttons */
+.auth-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-login {
+    background-color: transparent;
+    color: white;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 14px;
+}
+
+.btn-login:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: white;
+}
+
+.btn-register {
+    background-color: #10b981;
+    color: white;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-register:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+}
+
+/* User Menu */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #10b981;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-role {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+}
+
+.btn-logout {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: white;
 }
 
 /* --- Modal Styles --- */
@@ -62,7 +179,6 @@ header {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
     overflow-y: auto;
 }
 
@@ -73,26 +189,60 @@ header {
     padding: 20px;
 }
 
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: -1;
+}
+
 .modal-content {
     background-color: white;
-    padding: 25px;
+    padding: 40px;
     width: 100%;
-    max-width: 520px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 450px;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     position: relative;
     animation: slideIn 0.3s ease-out;
+    z-index: 2001;
+}
+
+.auth-modal {
+    max-width: 420px;
 }
 
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateY(-30px);
+        transform: translateY(-40px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.auth-header p {
+    margin: 8px 0 0 0;
+    color: #718096;
+    font-size: 14px;
 }
 
 .modal-header {
@@ -118,16 +268,17 @@ header {
 .close-btn {
     background: none;
     border: none;
-    font-size: 26px;
+    font-size: 28px;
     color: #a0aec0;
     cursor: pointer;
     padding: 0;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    line-height: 1;
 }
 
 .close-btn:hover {
@@ -139,7 +290,7 @@ header {
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
     position: relative;
 }
 
@@ -160,10 +311,10 @@ header {
 }
 
 label {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: #4a5568;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 label .required {
@@ -172,29 +323,33 @@ label .required {
 }
 
 input[type="text"],
+input[type="email"],
+input[type="password"],
 input[type="number"],
 input[type="date"],
 select,
 textarea {
     width: 100%;
-    padding: 8px 11px;
+    padding: 11px 14px;
     border: 1.5px solid #e2e8f0;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 14px;
     outline: none;
     transition: all 0.2s ease;
-    background-color: #fafbfc;
+    background-color: #f8fafc;
     font-family: inherit;
 }
 
 input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
 input[type="number"]:focus,
 input[type="date"]:focus,
 select:focus,
 textarea:focus {
-    border-color: #2563eb;
+    border-color: #667eea;
     background-color: #fff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 input::placeholder {
@@ -203,11 +358,9 @@ input::placeholder {
 
 textarea {
     resize: none;
-    min-height: 70px;
-    max-height: 70px;
+    min-height: 80px;
 }
 
-/* Character Count */
 .char-count {
     font-size: 11px;
     color: #a0aec0;
@@ -217,12 +370,55 @@ textarea {
     pointer-events: none;
 }
 
+/* Radio Buttons */
+.account-type {
+    margin-bottom: 20px;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+}
+
+.radio-label:hover {
+    border-color: #667eea;
+    background-color: #f0f4ff;
+}
+
+.radio-label input[type="radio"] {
+    margin: 0;
+    margin-right: 10px;
+    cursor: pointer;
+    width: auto;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.radio-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2d3748;
+}
+
 /* Time Picker Styles */
 .time-picker-group {
     display: flex;
     gap: 0;
     align-items: center;
-    background-color: #fafbfc;
+    background-color: #f8fafc;
     border: 1.5px solid #e2e8f0;
     border-radius: 8px;
     padding: 2px;
@@ -230,8 +426,8 @@ textarea {
 }
 
 .time-picker-group:focus-within {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .time-input {
@@ -251,7 +447,7 @@ textarea {
 }
 
 .time-input:focus {
-    background-color: rgba(37, 99, 235, 0.05) !important;
+    background-color: rgba(102, 126, 234, 0.05) !important;
     box-shadow: none !important;
     border: none !important;
     color: #2d3748;
@@ -274,19 +470,19 @@ textarea {
 
 .salary-input {
     width: 100%;
-    padding: 8px 11px;
+    padding: 11px 14px;
     border: 1.5px solid #e2e8f0;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 14px;
     outline: none;
     transition: all 0.2s ease;
-    background-color: #fafbfc;
+    background-color: #f8fafc;
 }
 
 .salary-input:focus {
-    border-color: #2563eb;
+    border-color: #667eea;
     background-color: #fff;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .salary-dash {
@@ -300,29 +496,34 @@ textarea {
 .form-actions {
     display: flex;
     gap: 10px;
-    margin-top: 18px;
+    margin-top: 20px;
 }
 
 .save-btn {
     flex: 1;
-    background-color: #2563eb;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 10px 16px;
+    padding: 12px 16px;
     border: none;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .save-btn:hover {
-    background-color: #1d4ed8;
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
 }
 
 .save-btn:active {
-    transform: translateY(1px);
+    transform: translateY(0);
+}
+
+.btn-full {
+    width: 100%;
 }
 
 .cancel-btn {
@@ -342,6 +543,32 @@ textarea {
     border-color: #cbd5e0;
 }
 
+/* Auth Footer */
+.auth-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.auth-footer p {
+    margin: 0;
+    color: #718096;
+    font-size: 13px;
+}
+
+.auth-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.auth-footer a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
 /* --- Job Cards Grid --- */
 .jobs-grid {
     display: grid;
@@ -356,7 +583,7 @@ textarea {
     position: relative;
     width: 340px;
     font-family: 'Segoe UI', Tahoma, sans-serif;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 20px;
     background-color: white;
@@ -366,7 +593,8 @@ textarea {
 
 .job-card:hover {
     box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.12);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    border-color: #667eea;
 }
 
 /* Favorite Star */
@@ -375,75 +603,78 @@ textarea {
     top: 15px;
     right: 15px;
     font-size: 22px;
-    color: #999;
+    color: #ddd;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .favorite-star:hover {
-    color: #f1c40f;
+    color: #fbbf24;
     transform: scale(1.2);
 }
 
 .favorite-star.active {
-    color: #f1c40f;
+    color: #fbbf24;
 }
 
 .job-title {
     margin: 0;
     padding-right: 25px;
-    font-size: 20px;
+    font-size: 18px;
     color: #1a202c;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 /* Meta Info */
 .meta-info {
-    margin: 10px 0;
+    margin: 12px 0;
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .category-tag {
-    background: #eff6ff;
-    color: #2563eb;
-    padding: 4px 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5px 12px;
     border-radius: 6px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
+
 .status-tag {
-    background-color: #ecfdf5; 
-    color: #059669;            
-    padding: 4px 12px;
-    border-radius: 99px;    
+    background-color: #ecfdf5;
+    color: #059669;
+    padding: 5px 12px;
+    border-radius: 6px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border: 1px solid #10b98133; 
-    display: inline-block;
+    border: 1px solid #10b98133;
 }
 
 .slots-tag {
     font-size: 12px;
-    color: #666;
+    color: #667eea;
+    font-weight: 600;
 }
 
 .info-container {
     margin: 15px 0;
-    padding: 10px 0;
-    border-top: 1px dotted #e5e7eb;
-    border-bottom: 1px dotted #e5e7eb;
+    padding: 12px 0;
+    border-top: 1px solid #f0f4f8;
+    border-bottom: 1px solid #f0f4f8;
 }
 
 .info-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 6px;
-    font-size: 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
     color: #555;
 }
 
@@ -453,8 +684,9 @@ textarea {
 }
 
 .salary {
-    color: #059669;
+    color: #10b981;
     font-weight: 700;
+    font-size: 14px;
 }
 
 /* Footer Stats */
@@ -474,7 +706,7 @@ textarea {
 
 .main-btn {
     flex: 2;
-    background-color: #2563eb;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
     padding: 10px;
@@ -483,16 +715,18 @@ textarea {
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 13px;
+    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.2);
 }
 
 .main-btn:hover {
-    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .side-btn {
     flex: 1;
     background-color: #f8fafc;
-    color: #4a5568;
+    color: #667eea;
     border: 1.5px solid #e2e8f0;
     padding: 10px;
     border-radius: 6px;
@@ -503,26 +737,26 @@ textarea {
 }
 
 .side-btn:hover {
-    background-color: #e2e8f0;
-    border-color: #cbd5e0;
+    background-color: #f0f4ff;
+    border-color: #667eea;
 }
 
 /* Company Info */
 .company-wrapper {
     display: flex;
     flex-direction: column;
-    margin-top: 5px;
+    margin-top: 8px;
 }
 
 .company-name {
     color: #2d3748;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .company-rating {
     font-size: 12px;
-    color: #f39c12;
+    color: #f59e0b;
     margin-top: 3px;
     font-weight: 500;
 }
@@ -537,22 +771,23 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
 #job-city {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0aec0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
-    padding-right: 30px; /* Make space for the arrow */
+    padding-right: 30px;
 }
 
-/* Optional: Hides the default browser arrow if you prefer the custom SVG one above */
 #job-city::-webkit-calendar-picker-indicator {
     opacity: 0;
 }
+
 .filters-container {
     background-color: #ffffff;
     border-bottom: 1px solid #e5e7eb;
     padding: 20px 0;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .filters-content {
@@ -579,7 +814,7 @@ input[type="number"] {
     letter-spacing: 0.5px;
 }
 
-.filter-group input, 
+.filter-group input,
 .filter-group select {
     width: 100%;
     padding: 10px 12px;
@@ -590,16 +825,16 @@ input[type="number"] {
     transition: all 0.2s ease;
 }
 
-.filter-group input:focus, 
+.filter-group input:focus,
 .filter-group select:focus {
-    border-color: #2563eb;
+    border-color: #667eea;
     background-color: #fff;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
 }
 
 .filter-submit-btn {
-    background-color: #2563eb;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
     padding: 11px 25px;
@@ -609,11 +844,12 @@ input[type="number"] {
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .filter-submit-btn:hover {
-    background-color: #1d4ed8;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 /* Responsive Filters */
@@ -636,13 +872,14 @@ input[type="number"] {
     .filter-actions {
         grid-column: span 1;
     }
-}
-
-/* Responsive */
-@media (max-width: 600px) {
+    
     .modal-content {
-        padding: 20px;
-        max-width: 98%;
+        padding: 24px;
+        max-width: 95%;
+    }
+
+    .auth-modal {
+        padding: 30px 20px;
     }
 
     .form-row {
@@ -658,6 +895,8 @@ input[type="number"] {
     }
 
     input[type="text"],
+    input[type="email"],
+    input[type="password"],
     input[type="number"],
     input[type="date"],
     select,
@@ -673,18 +912,38 @@ input[type="number"] {
     .job-card {
         width: 100%;
     }
+
+    .user-menu {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .user-info {
+        width: 100%;
+    }
+
+    .btn-logout {
+        width: 100%;
+    }
 }
 
 @media (max-width: 500px) {
-    .modal-content {
-        padding: 18px;
-    }
-
-    .modal-content h2 {
-        font-size: 18px;
-    }
-
     #page-title {
-        font-size: 20px;
+        font-size: 22px;
+    }
+
+    .header-actions {
+        gap: 8px;
+    }
+
+    .auth-buttons {
+        gap: 6px;
+    }
+
+    .btn-login,
+    .btn-register {
+        padding: 8px 12px;
+        font-size: 12px;
     }
 }

@@ -1,26 +1,40 @@
 export function openAddForm() {
-    const modal = document.getElementById("add-modal");
-    if (modal) {
-        const dateFrom = document.getElementById('date-from');
-        const dateTo = document.getElementById('date-to');
-        if(dateFrom) dateFrom.max = "3000-12-31";
-        if(dateTo) dateTo.max = "3000-12-31";
-        modal.classList.add('open');
-    }
+    document.getElementById("add-modal")?.classList.add('open');
 }
 
 export function closeAddForm() {
-    const modal = document.getElementById("add-modal");
-    if (modal) {
-        modal.classList.remove('open');
-    }
+    document.getElementById("add-modal")?.classList.remove('open');
+}
+
+export function openLoginModal() {
+    document.getElementById("login-modal")?.classList.add('open');
+}
+
+export function closeLoginModal() {
+    document.getElementById("login-modal")?.classList.remove('open');
+}
+
+export function openRegisterModal() {
+    document.getElementById("register-modal")?.classList.add('open');
+}
+
+export function closeRegisterModal() {
+    document.getElementById("register-modal")?.classList.remove('open');
 }
 
 export function setupModalListeners() {
     window.addEventListener('click', function(event) {
-        const modal = document.getElementById('add-modal');
-        if (event.target === modal) {
-            closeAddForm();
+        if (event.target.classList.contains('modal')) {
+            event.target.classList.remove('open');
+        }
+    });
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.getElementById('add-modal')?.classList.remove('open');
+            document.getElementById('login-modal')?.classList.remove('open');
+            document.getElementById('register-modal')?.classList.remove('open');
         }
     });
 }
@@ -29,7 +43,7 @@ export function setupTimeInputs() {
     const timeInputs = document.querySelectorAll('.time-input');
     timeInputs.forEach(input => {
         input.addEventListener('focus', function() {
-            this.value = '';
+            this.select();
         });
 
         input.addEventListener('input', function() {
@@ -45,6 +59,8 @@ export function setupTimeInputs() {
         input.addEventListener('blur', function() {
             if (this.value.length === 1) {
                 this.value = this.value.padStart(2, '0');
+            } else if (this.value === '') {
+                this.value = '';
             }
         });
     });

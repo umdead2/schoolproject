@@ -5,27 +5,83 @@ const path = require("path");
 const db = new Database('jobs.db');
 const app = express();
 const port = process.env.PORT || 3000;
+const bcrypt = require('bcrypt');
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "main")));
 
 app.use(session({
-    secret: 'summer-job-secret-key', 
-    resave: false,                  
-    saveUninitialized: false,       
-    cookie: { 
-        maxAge: 24 * 60 * 60 * 1000, 
-        httpOnly: true               
-    }
+    secret: 'mana-supre-slepena-atslega',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
+// --- Auth Endpoints ---
+
+app.get('/api/me', (req, res) => {
+    if (req.session && req.session.userId) {
+        res.json({
+            loggedIn: true,
+            username: req.session.username,
+            iscompany: req.session.iscompany,
+            userId: req.session.userId
+        });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+
+app.post('/api/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: "E-pasts un parole ir obligāti" });
+    }
+
+    try {
+        const user = db.prepare('SELECT * FROM user WHERE email = ?').get(email);
+
+        if (!user) {
+            return res.status(401).json({ error: "Nekonstatēts lietotājs ar šādu e-pastu" });
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+            return res.status(401).json({ error: "Nepareiza parole" });
+        }
+
+        // Set session
+        req.session.userId = user.id;
+        req.session.username = user.username;
+        req.session.iscompany = user.iscompany;
+
+        res.json({ success: true, message: "Sekmīgi pieslēdzies" });
+
+    } catch (err) {
+        console.error("Login error:", err);
+        res.status(500).json({ error: "Pieslēgšanās kļūda" });
+    }
+});
+
+app.post('/api/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) return res.status(500).json({ error: "Logout failed" });
+        res.clearCookie('connect.sid');
+        res.json({ success: true });
+    });
+});
+
+// --- Job Endpoints ---
+
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "main/main.html"));
+    res.sendFile(path.join(__dirname, "main", "main.html"));
 });
 
 app.get('/api/jobs', (req, res) => {
     try {
-            const sql = `
+        const sql = `
             SELECT 
                 jobs.*, 
                 companies.name AS company_name, 
@@ -33,40 +89,58 @@ app.get('/api/jobs', (req, res) => {
                 companies.reviews
             FROM jobs
             LEFT JOIN companies ON jobs.company_id = companies.id
+            WHERE jobs.status = 'open'
+            ORDER BY jobs.created_at DESC
         `;
-            
-            const rows = db.prepare(sql).all(); 
-            res.json(rows);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
+        
+        const rows = db.prepare(sql).all(); 
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
     }
 });
 
 app.post('/api/advertisement', (req, res) => {
+    // Check if user is logged in and is a company
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({ error: "Jums jābūt pieslēgtam" });
+    }
+
+    if (req.session.iscompany !== 1) {
+        return res.status(403).json({ error: "Tikai uzņēmumi var publicēt vakances" });
+    }
+
     const data = req.body;
     
     try {
-        // First, insert the company
-        const companyStmt = db.prepare(`
-            INSERT INTO companies (name, rating, reviews) 
-            VALUES (?, ?, ?)
-        `);
+        let company = db.prepare('SELECT * FROM companies WHERE id IN (SELECT company_id FROM jobs WHERE user_id = ?)').get(req.session.userId);
         
-        const companyResult = companyStmt.run(data.company_title, 0, 0);
-        const company_id = companyResult.lastInsertRowid;
+        let company_id;
+        if (!company) {
+            const companyStmt = db.prepare(`
+                INSERT INTO companies (name, rating, reviews) 
+                VALUES (?, ?, ?)
+            `);
+            const companyResult = companyStmt.run(req.session.username, 0, 0);
+            company_id = companyResult.lastInsertRowid;
+        } else {
+            company_id = company.id;
+        }
         
-        // Then insert the job with the new company_id
+        // Insert job
         const jobStmt = db.prepare(`
             INSERT INTO jobs (
-                title, company_id, status, open_slots, salary_min, 
+                title, company_id, user_id, status, open_slots, salary_min, 
                 salary_max, city, category, responsibilities, applicants, 
                 start_work, end_work, work_from, work_till, requirements
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
         
         const jobResult = jobStmt.run(
             data.job_title,
             company_id,
+            req.session.userId,
             'open',
             data.open_slots,
             data.min_salary,
@@ -79,14 +153,14 @@ app.post('/api/advertisement', (req, res) => {
             data.end_work,
             data.work_from,
             data.work_till,
-            data.job_requirements
+            data.job_requirements || null
         );
         
         res.json({ 
             success: true, 
             jobId: jobResult.lastInsertRowid,
             companyId: company_id,
-            message: "Job advertisement created successfully"
+            message: "Darba sludinājums veiksmīgi izveidots"
         });
         
     } catch (error) {
@@ -97,9 +171,6 @@ app.post('/api/advertisement', (req, res) => {
 
 app.post('/api/filter', (req, res) => {
     const filters = req.body;
-    req.session.userId = 101;
-        req.session.isCompany = 1; 
-        req.session.username = "Super Company SIA";
     let sql = `
         SELECT 
             jobs.*, 
@@ -108,7 +179,7 @@ app.post('/api/filter', (req, res) => {
             companies.reviews
         FROM jobs 
         LEFT JOIN companies ON jobs.company_id = companies.id 
-        WHERE 1=1`; 
+        WHERE jobs.status = 'open'`; 
 
     const params = [];
 
@@ -129,6 +200,8 @@ app.post('/api/filter', (req, res) => {
         params.push(Number(filters.salary));
     }
 
+    sql += ` ORDER BY jobs.created_at DESC`;
+
     try {
         const rows = db.prepare(sql).all(...params);
         res.json(rows);
@@ -137,13 +210,61 @@ app.post('/api/filter', (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+app.post('/api/register', async (req, res) => {
+    const { username, email, password, iscompany, phone } = req.body;
+
+    // 1. Basic validation
+    if (!username || !email || !password) {
+        return res.status(400).json({ error: "Lūdzu aizpildiet visus obligātos laukus!" });
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({ error: "Parole jābūt vismaz 6 rakstzīmes!" });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const sql = `
+            INSERT INTO user (username, email, password, phone, iscompany) 
+            VALUES (?, ?, ?, ?, ?)
+        `;
+
+        const result = db.prepare(sql).run(
+            username, 
+            email, 
+            hashedPassword, 
+            phone || null, 
+            iscompany 
+        );
+
+        req.session.userId = result.lastInsertRowid;
+        req.session.username = username;
+        req.session.iscompany = iscompany;
+
+        res.json({ success: true, message: "Lietotājs veiksmīgi reģistrēts!" });
+
+    } catch (err) {
+        console.error("Register error:", err);
+        if (err.message.includes('UNIQUE constraint failed: user.email')) {
+            return res.status(400).json({ error: "E-pasts jau tiek lietots!" });
+        }
+        if (err.message.includes('UNIQUE constraint failed: user.username')) {
+            return res.status(400).json({ error: "Lietotājvārds jau tiek lietots!" });
+        }
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// --- Server Start ---
+
 (async () => {
     try {
         app.listen(process.env.PORT || 3000, "0.0.0.0", () => {
-            console.log("Server running");
+            console.log("🚀 Server running on http://localhost:3000");
         });
     } catch (err) {
-        console.error("Failed to start browser:", err);
+        console.error("Failed to start server:", err);
         process.exit(1);
     }
 })();
