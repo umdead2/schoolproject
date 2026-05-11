@@ -160,6 +160,7 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "main", "main.html"));
 });
 
+// ✅ SPECIFIC ROUTES FIRST (before generic :username)
 app.get('/api/jobs', (req, res) => {
     const currentUserId = req.session.userId || 0;
     try {
@@ -173,6 +174,52 @@ app.get('/api/jobs', (req, res) => {
         `;
         const rows = db.prepare(sql).all(currentUserId); 
         res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/jobs/:id', (req, res) => {
+    const jobId = req.params.id;
+    try {
+        const job = db.prepare(`
+            SELECT jobs.*, companies.name AS company_name
+            FROM jobs
+            LEFT JOIN companies ON jobs.company_id = companies.id
+            WHERE jobs.id = ?
+            ORDER BY jobs.created_at DESC
+        `).get(jobId);
+
+        if (!job) {
+            return res.status(404).json({ error: 'Darbs nav atrasts' });
+        }
+
+        res.json(job);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/user/:username', (req, res) => {
+    const { username } = req.params;
+    const currentUserId = req.session.userId || 0;
+
+    try {
+        const user = db.prepare('SELECT id, username, email, phone, iscompany FROM user WHERE username = ?').get(username);
+        if (!user) return res.status(404).json({ error: "Lietotājs nav atrasts" });
+
+        let jobs = [];
+        if (user.iscompany === 1) {
+            jobs = db.prepare(`
+                SELECT jobs.*, companies.name as company_name,
+                (SELECT 1 FROM favorites WHERE user_id = ? AND job_id = jobs.id) AS is_favorite
+                FROM jobs 
+                LEFT JOIN companies ON jobs.company_id = companies.id 
+                WHERE jobs.user_id = ?
+            `).all(currentUserId, user.id);
+        }
+
+        res.json({ user, jobs });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -373,40 +420,7 @@ app.get('/api/favorites', (req, res) => {
     res.json(rows);
 });
 
-
-app.post('/api/logout', (req, res) => {
-    req.session.destroy();
-    res.clearCookie('connect.sid');
-    res.json({ success: true });
-});
-
-app.get('/api/user/:username', (req, res) => {
-    const { username } = req.params;
-    const currentUserId = req.session.userId || 0; // Ielogotā lietotāja ID vai 0
-
-    try {
-        const user = db.prepare('SELECT id, username, email, phone, iscompany FROM user WHERE username = ?').get(username);
-        if (!user) return res.status(404).json({ error: "Lietotājs nav atrasts" });
-
-        let jobs = [];
-        if (user.iscompany === 1) {
-            // ✅ Šeit ir "maģija": mēs pievienojam EXISTS pārbaudi
-            jobs = db.prepare(`
-                SELECT jobs.*, companies.name as company_name,
-                (SELECT 1 FROM favorites WHERE user_id = ? AND job_id = jobs.id) AS is_favorite
-                FROM jobs 
-                LEFT JOIN companies ON jobs.company_id = companies.id 
-                WHERE jobs.user_id = ?
-            `).all(currentUserId, user.id);
-        }
-
-        res.json({ user, jobs });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// ✅ FIX: Serve profile.html for /user/:username route
+// ✅ GENERIC ROUTE LAST - Serve profile.html for /user/:username route
 app.get('/user/:username', (req, res) => {
     res.sendFile(path.join(__dirname, "profile", "profile.html"));
 });
