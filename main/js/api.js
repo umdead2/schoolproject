@@ -17,11 +17,20 @@ export async function loginUser(email, password) {
 }
 
 export async function registerUser(userData) {
-    return await fetch('/api/register', {
+    // ✅ FIX: Don't return immediately - wait for session to be set
+    const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)
     });
+    
+    if (!res.ok) {
+        throw new Error('Registration failed');
+    }
+    
+    // Wait a moment for session cookie to be set
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return res;
 }
 
 export async function logoutUser() {
@@ -36,6 +45,7 @@ export async function filterJobs(filterData) {
     });
     return await res.json();
 }
+
 export async function createAdvertisement(adData) {
     try {
         const response = await fetch("/api/advertisement", {
